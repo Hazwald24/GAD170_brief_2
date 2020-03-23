@@ -41,8 +41,26 @@ public class Character : MonoBehaviour
 
     public void InitialStats()
     {
-        // TODO - First, you can
-        Debug.LogWarning("InitialStats called, needs to distribute points into stats. This should be able to be ported from previous brief work");
+        level = 1;
+
+        int statChoice;
+
+        for (int i = 0; i < 10; i++)
+        {
+            statChoice = Random.Range(0, 3);
+            switch (statChoice)
+            {
+                case 0:
+                    style++;
+                    break;
+                case 1:
+                    luck++;
+                    break;
+                case 2:
+                    rhythm++;
+                    break;
+            }
+        }
     }
 
     public void AssignName(CharacterName characterName)

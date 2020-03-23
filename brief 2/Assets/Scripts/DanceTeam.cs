@@ -27,11 +27,15 @@ public class DanceTeam : MonoBehaviour
     public void AddNewDancer(Character dancer)
     {
         Debug.LogWarning("AddNewDancer called, it needs to put dancer in both lists and set the dancers team.");
+        allDancers.Add(dancer);
+        activeDancers.Add(dancer);
     }
 
     public void RemoveFromActive(Character dancer)
     {
         Debug.LogWarning("RemoveFromActive called, it needs to take the dancer out of the active list and possibly update selectedness, mojo etc.");
+        allDancers.Remove(dancer);
+        activeDancers.Remove(dancer);
     }
 
 

@@ -33,6 +33,10 @@ public class CharacterNameGenerator : ScriptableObject
         CharacterName emptyName = new CharacterName(string.Empty, string.Empty, string.Empty, string.Empty);
         for (int i = 0; i < names.Length; i++)
         {
+            emptyName.firstName = "John";
+            emptyName.lastName = "Johnson";
+            emptyName.nickname = "The John";
+            emptyName.descriptors = "The man who Johns";
             names[i] = emptyName;
         }
 

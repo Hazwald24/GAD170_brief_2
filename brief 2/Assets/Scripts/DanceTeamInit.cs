@@ -19,6 +19,8 @@ public class DanceTeamInit : MonoBehaviour
     public GameObject dancerPrefab;
     public int dancersPerSide = 3;
     public CharacterNameGenerator nameGenerator;
+    private CharacterName[] teamANames;
+    private CharacterName[] teamBNames;
 
     private void OnEnable()
     {
@@ -28,10 +30,17 @@ public class DanceTeamInit : MonoBehaviour
     {
         GameEvents.OnBattleInitialise -= InitTeams;
     }
-
+   
     void InitTeams()
     {
         Debug.LogWarning("InitTeams called, needs to generate names for the teams and set them with teamA.SetTroupeName");
+        teamA.SetTroupeName("Team Awesome");
+        teamANames = nameGenerator.GenerateNames(dancersPerSide);
+        teamA.InitialiseTeamFromNames(dancerPrefab, 0, teamANames);
+
+        teamB.SetTroupeName("Team Bestest");
+        teamBNames = nameGenerator.GenerateNames(dancersPerSide);
+        teamB.InitialiseTeamFromNames(dancerPrefab, 0, teamBNames);
 
         Debug.LogWarning("InitTeams called, needs to create character names via CharacterNameGenerator and get them into the team.InitaliseTeamFromNames");
     }
