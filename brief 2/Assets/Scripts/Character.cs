@@ -104,32 +104,6 @@ public class Character : MonoBehaviour
     }
 
     /// <summary>
-    /// A function called when the battle is completed and some xp is to be awarded.
-    /// Takes in and store in BattleOutcome from the BattleHandler script which is how much the player has won by.
-    /// By Default it is set to 100% victory.
-    /// </summary>
-    public void CalculateXP(float BattleOutcome)
-    {
-
-    }
-
-    /// <summary>
-    /// A function used to handle actions associated with levelling up.
-    /// </summary>
-    private void LevelUp()
-    {
-
-    }
-
-    /// <summary>
-    /// A function used to assign a random amount of points ot each of our skills.
-    /// </summary>
-    public void AssignSkillPointsOnLevelUp(int PointsToAssign)
-    {
-
-    }
-
-    /// <summary>
     /// Is called inside of our DanceTeam.cs is used to set the characters name!
     /// </summary>
     /// <param name="characterName"></param>
