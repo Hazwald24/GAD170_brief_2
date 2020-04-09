@@ -12,8 +12,7 @@ public class FightManager : MonoBehaviour
     public Color drawCol = Color.gray; // A colour you might want to set the battle log message to if it's a draw.
     private float fightAnimTime = 2; //An amount to wait between initiating the fight, and the fight begining, so we can see some of that sick dancing.
 
-    //TODO this function is all you need to modify, in this script.
-    //You just need determine who wins/loses/draws etc.
+
     IEnumerator Attack(Character teamACharacter, Character teamBCharacter)
     {
         Character winner;
@@ -45,19 +44,7 @@ public class FightManager : MonoBehaviour
         // Tells the system to wait X number of seconds until the fight to begins.
         yield return new WaitForSeconds(fightAnimTime);
 
-        /*
-        // We want to get some battle points from each of our characters...instead of just 0....is there a function in the Character script that could help us?
-        int teamABattlePoints = teamACharacter.ReturnBattlePoints();
-        int teamBBattlePoints = teamBCharacter.ReturnBattlePoints();
-
-        // We need to do some logic hear to check who wins based on the battle points, we want to handle team A winning, team B winning and draw scenarios.
-        winner = teamACharacter;
-        defeated = teamBCharacter;
-        outcome = 0;
-        */ 
         BattleLog.Log("Fight is over! The winner is " + winner.charName.GetFullCharacterName() + " with a score of " + outcome, drawCol);
-
-        Debug.LogWarning("Attack called, may want to use the BattleLog.Log() to report the dancers and the outcome of their dance off.");
 
         // Pass on the winner/loser and the outcome to our fight completed function.
         FightCompleted(winner, defeated, outcome);

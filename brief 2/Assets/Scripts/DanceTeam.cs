@@ -27,8 +27,6 @@ public class DanceTeam : MonoBehaviour
     /// <param name="dancer"></param>
     public void AddNewDancer(Character dancer)
     {
-        Debug.LogWarning("AddNewDancer called, it needs to put dancer in both lists and set the dancers team.");
-        // we probably want to add our new dancers to our all dancers and our active dancers lists here..
         allDancers.Add(dancer);
         activeDancers.Add(dancer);
     }
@@ -39,9 +37,6 @@ public class DanceTeam : MonoBehaviour
     /// <param name="dancer"></param>
     public void RemoveFromActive(Character dancer)
     {
-        Debug.LogWarning("RemoveFromActive called, it needs to take the dancer out of the active dancers list");
-        // This gets called when our team mate dies :(
-        // We probably want to remove the dancer passed in from our active dancer list.
         activeDancers.Remove(dancer);
     }
 

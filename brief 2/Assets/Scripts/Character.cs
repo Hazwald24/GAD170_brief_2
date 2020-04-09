@@ -74,8 +74,6 @@ public class Character : MonoBehaviour
     {
         mojoRemaining -= amount;
 
-        // we probably want to do a check in here to see if the character is dead or not...
-        // if they are we probably want to remove them from their team's active dancer list...sure wish there was a function in their dance team  script we could use for this.
         if (mojoRemaining <= 0)
         {
             myTeam.RemoveFromActive(this);
@@ -112,10 +110,7 @@ public class Character : MonoBehaviour
     /// </summary>
     public void CalculateXP(float BattleOutcome)
     {
-        Debug.LogWarning("This character needs some xp to be given, the outcome of the fight was: " + BattleOutcome);
-        // The result of the battle is coming in which is stored in BattleOutcome .... we probably want to do something with it to calculate XP.
 
-        // We probably also want to check to see if the player can level up and if so do something....
     }
 
     /// <summary>
@@ -123,8 +118,7 @@ public class Character : MonoBehaviour
     /// </summary>
     private void LevelUp()
     {
-        //We probably want to increase the player level, the xp threshold and increase our current skill points based on our level.
-        Debug.LogWarning("Level up has been called");
+
     }
 
     /// <summary>
@@ -132,10 +126,7 @@ public class Character : MonoBehaviour
     /// </summary>
     public void AssignSkillPointsOnLevelUp(int PointsToAssign)
     {
-        Debug.LogWarning("AssignSkillPointsOnLevelUp has been called " + PointsToAssign);
 
-        // We are taking an amount of points to assign in, and we want to assign it to our luck, style and rhythm, we 
-        // want some random amount of points added to our current values.
     }
 
     /// <summary>
