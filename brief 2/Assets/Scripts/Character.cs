@@ -3,43 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Represents a single character, their stats, name and current mojo (or hp) in the dance battle.
-/// 
-/// TODO:
-///     Initialise stats for the character that will be used to determine their victory in dance offs.
-///     You may wish or need to add additional stats here for use in the fight (FightManager)
-///     May need to handle the loss of mojo when loosing a fight
+/// Functions to complete:
+/// - Return Battle Points
+/// - Deal Damage
 /// </summary>
 public class Character : MonoBehaviour
 {
-    public CharacterName charName;
+    public CharacterName charName; // This is a reference to an instance of the characters name script.
 
-    [Range(0.0f,1.0f)]
-    public float mojoRemaining = 1;
+    [Range(0.0f, 1.0f)]
+    public float mojoRemaining = 1; // This is the characters hp this is a float 0-100 but is normalised to 0.0 - 1.0;
 
     [Header("Stats")]
-    public int availablePoints = 10;
+    public int availablePoints = 10; // The total amount of points we want to assign to our stats!
 
-    public int level;
-    public int xp;
+    public int level; // This is optional if you want to expand on this to level up your characters and stuff welcome to.
+    public int currentXP; // This is optional as well if you want to expand on this brief to assign xp etc!
     public int style, luck, rhythm;
 
 
     [Header("Related objects")]
-    public DanceTeam myTeam;
+    public DanceTeam myTeam; // This holds a reference to the characters current dance team instance they are assigned to.
 
-    public bool isSelected;
+    public bool isSelected; // This is used for determining if this character is selected in a battle.
 
     [SerializeField]
-    protected TMPro.TextMeshPro nickText;
+    protected TMPro.TextMeshPro nickText; // This is just a piece of text in Unity,  to display the characters name.
 
+    public AnimationController animController; // A reference to the animationController, is used to switch dancing states.
 
+    // This is called once, this then calls Initial Stats function
     void Awake()
     {
         InitialStats();
+        animController = GetComponent<AnimationController>();
     }
 
-    public void InitialStats()
+    /// <summary>
+    /// A function used to handle setting the intial stats of our game at the begining of the game.
+    /// </summary>
+    private void InitialStats()
     {
         level = 1;
 
@@ -63,10 +66,86 @@ public class Character : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// We probably want to use this to remove some hp (mojo) from our character.....
+    /// Then we probably want to check to see if they are dead or not from that damage and return true or false.
+    /// </summary>
+    public void DealDamage(float amount)
+    {
+        mojoRemaining -= amount;
+
+        // we probably want to do a check in here to see if the character is dead or not...
+        // if they are we probably want to remove them from their team's active dancer list...sure wish there was a function in their dance team  script we could use for this.
+        if (mojoRemaining <= 0)
+        {
+            myTeam.RemoveFromActive(this);
+        }
+    }
+
+    /// <summary>
+    /// Used to generate a number of battle points that is used in combat.
+    /// </summary>
+    /// <returns></returns>
+    public int ReturnBattlePoints()
+    {
+        int battlePoints = 0;
+        for (int i = 0; i < style; i++)
+        {
+            battlePoints += Random.Range(0, 7);
+        }
+        for (int i = 0; i < rhythm; i++)
+        {
+            battlePoints += Random.Range(2, 5);
+        }
+        int danceCritChance = luck * 5;
+        if (Random.Range(0, 101) <= danceCritChance)
+        {
+            battlePoints += battlePoints / 2;
+        }
+        return battlePoints;
+    }
+
+    /// <summary>
+    /// A function called when the battle is completed and some xp is to be awarded.
+    /// Takes in and store in BattleOutcome from the BattleHandler script which is how much the player has won by.
+    /// By Default it is set to 100% victory.
+    /// </summary>
+    public void CalculateXP(float BattleOutcome)
+    {
+        Debug.LogWarning("This character needs some xp to be given, the outcome of the fight was: " + BattleOutcome);
+        // The result of the battle is coming in which is stored in BattleOutcome .... we probably want to do something with it to calculate XP.
+
+        // We probably also want to check to see if the player can level up and if so do something....
+    }
+
+    /// <summary>
+    /// A function used to handle actions associated with levelling up.
+    /// </summary>
+    private void LevelUp()
+    {
+        //We probably want to increase the player level, the xp threshold and increase our current skill points based on our level.
+        Debug.LogWarning("Level up has been called");
+    }
+
+    /// <summary>
+    /// A function used to assign a random amount of points ot each of our skills.
+    /// </summary>
+    public void AssignSkillPointsOnLevelUp(int PointsToAssign)
+    {
+        Debug.LogWarning("AssignSkillPointsOnLevelUp has been called " + PointsToAssign);
+
+        // We are taking an amount of points to assign in, and we want to assign it to our luck, style and rhythm, we 
+        // want some random amount of points added to our current values.
+    }
+
+    /// <summary>
+    /// Is called inside of our DanceTeam.cs is used to set the characters name!
+    /// </summary>
+    /// <param name="characterName"></param>
     public void AssignName(CharacterName characterName)
     {
         charName = characterName;
-        if(nickText != null)
+        if (nickText != null)
         {
             nickText.text = charName.nickname;
             nickText.transform.LookAt(Camera.main.transform.position);

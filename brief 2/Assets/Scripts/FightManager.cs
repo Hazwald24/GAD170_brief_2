@@ -3,59 +3,104 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Handles the outcome of a dance off between 2 dancers, determines the strength of the victory form -1 to 1
-/// 
-/// TODO:
-///     Handle GameEvents.OnFightRequested, resolve based on stats and respond with GameEvents.FightCompleted
-///         This will require a winner and defeated in the fight to be determined.
-///         This may be where characters are set as selected when they are in a dance off and when they leave the dance off
-///         This may also be where you use the BattleLog to output the status of fights
-///     This may also be where characters suffer mojo (hp) loss when they are defeated
+/// Functions to complete:
+/// - Attack
 /// </summary>
 public class FightManager : MonoBehaviour
 {
-    public Color drawCol = Color.gray;
+    public BattleSystem battleSystem; //A reference to our battleSystem script in our scene
+    public Color drawCol = Color.gray; // A colour you might want to set the battle log message to if it's a draw.
+    private float fightAnimTime = 2; //An amount to wait between initiating the fight, and the fight begining, so we can see some of that sick dancing.
 
-    public float fightAnimTime = 2;
-
-    private void OnEnable()
+    //TODO this function is all you need to modify, in this script.
+    //You just need determine who wins/loses/draws etc.
+    IEnumerator Attack(Character teamACharacter, Character teamBCharacter)
     {
-        GameEvents.OnFightRequested += Fight;
-    }
+        Character winner;
+        Character defeated;
 
-    private void OnDisable()
-    {
-        GameEvents.OnFightRequested -= Fight;
-    }
+        float charAPoints, charBPoints;
+        charAPoints = (float)teamACharacter.ReturnBattlePoints();
+        charBPoints = (float)teamBCharacter.ReturnBattlePoints();
 
-    public void Fight(FightEventData data)
-    {
-        StartCoroutine(Attack(data.lhs, data.rhs));
-    }
+        float outcome;
 
-    IEnumerator Attack(Character lhs, Character rhs)
-    {
-        lhs.isSelected = true;
-        rhs.isSelected = true;
-        lhs.GetComponent<AnimationController>().Dance();
-        rhs.GetComponent<AnimationController>().Dance();
+        if (charAPoints > charBPoints)
+        {
+            winner = teamACharacter;
+            defeated = teamBCharacter;
+            outcome = charAPoints / charBPoints - 1;
+        }
+        else
+        {
+            winner = teamBCharacter;
+            defeated = teamACharacter;
+            outcome = charBPoints / charAPoints - 1;
+        }
 
+        // Tells each dancer that they are selcted and sets the animation to dance.
+        SetUpAttack(teamACharacter);
+        SetUpAttack(teamBCharacter);
+
+        // Tells the system to wait X number of seconds until the fight to begins.
         yield return new WaitForSeconds(fightAnimTime);
 
-        float outcome = 0;
-        //defaulting to draw 
-        Character winner = lhs, defeated = rhs;
-        Debug.LogWarning("Attack called, needs to use character stats to determine winner with win strength from 1 to -1. This can most likely be ported from previous brief work.");
+        /*
+        // We want to get some battle points from each of our characters...instead of just 0....is there a function in the Character script that could help us?
+        int teamABattlePoints = teamACharacter.ReturnBattlePoints();
+        int teamBBattlePoints = teamBCharacter.ReturnBattlePoints();
 
+        // We need to do some logic hear to check who wins based on the battle points, we want to handle team A winning, team B winning and draw scenarios.
+        winner = teamACharacter;
+        defeated = teamBCharacter;
+        outcome = 0;
+        */ 
+        BattleLog.Log("Fight is over! The winner is " + winner.charName.GetFullCharacterName() + " with a score of " + outcome, drawCol);
 
-        Debug.LogWarning("Attack called, may want to use the BattleLog to report the dancers and the outcome of their dance off.");
+        Debug.LogWarning("Attack called, may want to use the BattleLog.Log() to report the dancers and the outcome of their dance off.");
 
-        var results = new FightResultData(winner, defeated, outcome);
-
-        lhs.isSelected = false;
-        rhs.isSelected = false;
-        GameEvents.FightCompleted(results);
-
+        // Pass on the winner/loser and the outcome to our fight completed function.
+        FightCompleted(winner, defeated, outcome);
         yield return null;
     }
+
+    #region Pre-Existing - No Modes Required
+    /// <summary>
+    /// Is called when two dancers have been selected and begins a fight!
+    /// </summary>
+    /// <param name="data"></param>
+    public void Fight(Character TeamA, Character TeamB)
+    {
+        StartCoroutine(Attack(TeamA, TeamB));
+    }
+
+    /// <summary>
+    /// Passes in a winning character, and a defeated character, as well as the outcome between -1 and 1
+    /// </summary>
+    /// <param name="winner"></param>
+    /// <param name="defeated"></param>
+    /// <param name="outcome"></param>
+    private void FightCompleted(Character winner, Character defeated, float outcome)
+    {
+        var results = new FightResultData(winner, defeated, outcome);
+
+        winner.isSelected = false;
+        defeated.isSelected = false;
+
+        battleSystem.FightOver(winner, defeated, outcome);
+        winner.animController.BattleResult(winner, defeated, outcome);
+        defeated.animController.BattleResult(winner, defeated, outcome);
+    }
+
+    /// <summary>
+    /// Sets up a dancer to be selected and the animation to start dancing.
+    /// </summary>
+    /// <param name="dancer"></param>
+    private void SetUpAttack(Character dancer)
+    {
+        dancer.isSelected = true;
+        dancer.GetComponent<AnimationController>().Dance();
+        BattleLog.Log(dancer.charName.GetFullCharacterName() + " Selected", dancer.myTeam.teamColor);
+    }
+    #endregion  
 }

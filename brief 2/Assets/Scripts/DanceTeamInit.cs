@@ -4,43 +4,35 @@ using UnityEngine;
 using System.Linq;
 
 /// <summary>
-/// This class generates and assigns names to the 2 dance teams in our dance off battle.
-/// It also controls the number of dancers on each team via the inspector
-/// It also uses the name generator to pass character names to the teams so they can initialise
-/// 
-/// TODO:
-///     Generate unique team names for both teams and assign them via team_.SetTroupeName(str);
-///     Use the nameGenerator to get enough names for the number of dancers on both teams and pass the required names via array to each team for init (InitaliseTeamFromNames)
+/// Functions to complete:
+/// - Init Teams
 /// </summary>
 public class DanceTeamInit : MonoBehaviour
 {
-    public DanceTeam teamA, teamB;
+    public DanceTeam teamA, teamB; // A reference to our teamA and teamB DanceTeam instances.
 
-    public GameObject dancerPrefab;
-    public int dancersPerSide = 3;
-    public CharacterNameGenerator nameGenerator;
-    private CharacterName[] teamANames;
-    private CharacterName[] teamBNames;
+    public GameObject dancerPrefab; // This is the dancer that gets spawned in for each team.
+    public int dancersPerSide = 3; // This is the number of dancers for each team, if you want more, you need to modify this in the inspector.
+    public CharacterNameGenerator nameGenerator; // This is a reference to our CharacterNameGenerator instance.
+    private CharacterName[] teamACharacterNames; // An array to hold all our character names of TeamA.
+    private CharacterName[] teamBCharacterNames; // An array to hold all the character names of TeamB
 
-    private void OnEnable()
+    /// <summary>
+    /// Called to iniatlise the dance teams with some dancers :D
+    /// </summary>
+    public void InitTeams()
     {
-        GameEvents.OnBattleInitialise += InitTeams;
-    }
-    private void OnDisable()
-    {
-        GameEvents.OnBattleInitialise -= InitTeams;
-    }
-   
-    void InitTeams()
-    {
-        Debug.LogWarning("InitTeams called, needs to generate names for the teams and set them with teamA.SetTroupeName");
+        Debug.LogWarning("InitTeams called, needs to generate names for the teams and set them with teamA.SetTroupeName and teamA.InitialiseTeamFromNames");
         teamA.SetTroupeName("Team Awesome");
-        teamANames = nameGenerator.GenerateNames(dancersPerSide);
-        teamA.InitialiseTeamFromNames(dancerPrefab, 0, teamANames);
+        teamACharacterNames = nameGenerator.GenerateNames(dancersPerSide);
+        teamA.InitialiseTeamFromNames(dancerPrefab, DanceTeam.Direction.Right, teamACharacterNames);
+        // We need to set out team names using teamA.SetTroupeName.
+        // We need to generate some character names for our teams to use from our CharacterNameGenerator.
+        // We need to spawn in some dancers using teamA.InitialiseTeamFromNames.
 
         teamB.SetTroupeName("Team Bestest");
-        teamBNames = nameGenerator.GenerateNames(dancersPerSide);
-        teamB.InitialiseTeamFromNames(dancerPrefab, 0, teamBNames);
+        teamBCharacterNames = nameGenerator.GenerateNames(dancersPerSide);
+        teamB.InitialiseTeamFromNames(dancerPrefab, DanceTeam.Direction.Left, teamBCharacterNames);
 
         Debug.LogWarning("InitTeams called, needs to create character names via CharacterNameGenerator and get them into the team.InitaliseTeamFromNames");
     }

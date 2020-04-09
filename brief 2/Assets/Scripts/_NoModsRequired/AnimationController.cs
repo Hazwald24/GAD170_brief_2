@@ -27,27 +27,15 @@ public class AnimationController : MonoBehaviour
         character = GetComponentInChildren<Character>();
     }
 
-    private void OnEnable()
+    public void BattleResult(Character winner, Character defeated, float outcome)
     {
-        //GameEvents.OnBattleBegin += Dance;
-        GameEvents.OnFightComplete += BattleResult;
-    }
-
-    private void OnDisable()
-    {
-        //GameEvents.OnBattleBegin -= Dance;
-        GameEvents.OnFightComplete -= BattleResult;
-    }
-
-    public void BattleResult(FightResultData data)
-    {
-        if (data.winner.gameObject == gameObject)
+        if (winner.gameObject == gameObject)
         {
             anim.SetTrigger("Win");
         }
-        else if (data.defeated.gameObject == gameObject)
+        else if (defeated.gameObject == gameObject)
         {
-            if (data.outcome == 0)
+            if (outcome == 0)
             {
                 anim.SetTrigger("Win");
             }

@@ -41,38 +41,38 @@ public static class GameEvents
     public delegate void BattleFinishedDel(DanceTeam winner);
     #endregion
 
-    public static event BattleInitialiseDel OnBattleInitialise;
-    public static void IntialiseBattle()
-    {
-        if (OnBattleInitialise != null)
-            OnBattleInitialise();
-    }
+    //public static event BattleInitialiseDel OnBattleInitialise;
+    //public static void IntialiseBattle()
+    //{
+    //    if (OnBattleInitialise != null)
+    //        OnBattleInitialise();
+    //}
 
-    public static event RequestFightersDel OnRequestFighters;
-    public static void RequestFighters()
-    {
-        if (OnRequestFighters != null)
-            OnRequestFighters();
-    }
+    //public static event RequestFightersDel OnRequestFighters;
+    //public static void RequestFighters()
+    //{
+    //    if (OnRequestFighters != null)
+    //        OnRequestFighters();
+    //}
 
-    public static event FightRequestDel OnFightRequested;
-    public static void RequestFight(FightEventData data)
-    {
-        if (OnFightRequested != null)
-            OnFightRequested(data);
-    }
+    //public static event FightRequestDel OnFightRequested;
+    //public static void RequestFight(FightEventData data)
+    //{
+    //    if (OnFightRequested != null)
+    //        OnFightRequested(data);
+    //}
 
-    public static event FightCompleteDel OnFightComplete;
-    public static void FightCompleted(FightResultData data)
-    {
-        if (OnFightComplete != null)
-            OnFightComplete(data);
-    }
+    //public static event FightCompleteDel OnFightComplete;
+    //public static void FightCompleted(FightResultData data)
+    //{
+    //    if (OnFightComplete != null)
+    //        OnFightComplete(data);
+    //}
 
-    public static event BattleFinishedDel OnBattleFinished;
-    public static void BattleFinished(DanceTeam winner)
-    {
-        if (OnBattleFinished != null)
-            OnBattleFinished(winner);
-    }
+    //public static event BattleFinishedDel OnBattleFinished;
+    //public static void BattleFinished(DanceTeam winner)
+    //{
+    //    if (OnBattleFinished != null)
+    //        OnBattleFinished(winner);
+    //}
 }

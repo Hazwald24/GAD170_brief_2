@@ -4,60 +4,74 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Object that holds and represents a Dance Troupe or Team. A list of dancers on the roster, the ones still able to dance.
-/// It is also responsible for holding team specific data like where to line them up, their colors, and so on.
-/// 
-/// TODO: 
-///     This needs to handle adding and removing dancers from the active and/or all dancers lists
-///     This is where you might add additional feedback for team actions
+/// Functions to complete:
+/// - Remove From Active
+/// - Add Dancer
 /// </summary>
 public class DanceTeam : MonoBehaviour
 {
-    const float DancerSpaceing = 2;
-
-    public Color teamColor = Color.white;
+    public enum Direction : int { Left = -1, Right = 1 }; // An Enum used to hold Left and Right directions/determines which side of the screen dancers spawn in at.
+    const float DancerSpaceing = 2; // The distance between each dancer when they spawn in.
+    public Color teamColor = Color.white; // Our team colours, we can change these in the inspectors.
     [SerializeField]
-    protected string danceTeamName;
-    public Transform lineUpStart;
-    public Text troupeNameText;
-    public List<Character> allDancers;
-    public List<Character> activeDancers;
-    public GameObject fightWinContainer;
+    protected string danceTeamName; // this is set from our SetTroupeName Function.
+    public Transform lineUpStart; // this is just a transform in our scene where we set the spawn position of our team.
+    public GameObject fightWinContainer; // This is just a point light in our scene that gets turned on and off if we win just to make it look fancy.
+    public Text troupeNameText; // this is just a text element in the scene that set by the troupe name function.
+    public List<Character> allDancers; // A list of all the dancers on our team.
+    public List<Character> activeDancers; // A list of our currently active dancers, when they die they need to be removed from this list. 
 
+    /// <summary>
+    /// Adds a new dancer to our dance team
+    /// </summary>
+    /// <param name="dancer"></param>
     public void AddNewDancer(Character dancer)
     {
         Debug.LogWarning("AddNewDancer called, it needs to put dancer in both lists and set the dancers team.");
+        // we probably want to add our new dancers to our all dancers and our active dancers lists here..
         allDancers.Add(dancer);
         activeDancers.Add(dancer);
     }
 
+    /// <summary>
+    /// Removes a dancer to our dance team.
+    /// </summary>
+    /// <param name="dancer"></param>
     public void RemoveFromActive(Character dancer)
     {
-        Debug.LogWarning("RemoveFromActive called, it needs to take the dancer out of the active list and possibly update selectedness, mojo etc.");
-        allDancers.Remove(dancer);
+        Debug.LogWarning("RemoveFromActive called, it needs to take the dancer out of the active dancers list");
+        // This gets called when our team mate dies :(
+        // We probably want to remove the dancer passed in from our active dancer list.
         activeDancers.Remove(dancer);
     }
 
-
-    #region Pre-Existing
-    //init prefabs in order and call addnewdancer
-    public void InitaliseTeamFromNames(GameObject dancerPrefab, float direction, CharacterName[] names)
+    /// <summary>
+    /// Takes in a dancer prefab to spawn, a direction right or left this Directio is an enum, and an Array of Names
+    /// </summary>
+    /// <param name="dancerPrefab"></param>
+    /// <param name="direction"></param>
+    /// <param name="names"></param>
+    public void InitialiseTeamFromNames(GameObject dancerPrefab, Direction screenDirection, CharacterName[] names)
     {
         for (int i = 0; i < names.Length; i++)
         {
             //make one
-            var newDancer = Instantiate(dancerPrefab, lineUpStart.position + lineUpStart.right * i * DancerSpaceing * direction, dancerPrefab.transform.rotation);
+            var newDancer = Instantiate(dancerPrefab, lineUpStart.position + lineUpStart.right * i * DancerSpaceing * ((int)screenDirection), dancerPrefab.transform.rotation);
             //fix its rotation, animations are often a pain
             newDancer.transform.forward = -lineUpStart.right;
 
             //give it a name and add it to the team
             var aChar = newDancer.GetComponent<Character>();
             aChar.AssignName(names[i]);
+            aChar.myTeam = this;
             AddNewDancer(aChar);
         }
     }
 
-    //called by other scripts, also updates are text element
+    /// <summary>
+    /// Sets the team's troupe name to something we pass in.
+    /// </summary>
+    /// <param name="name"></param>
     public void SetTroupeName(string name)
     {
         danceTeamName = name;
@@ -67,7 +81,9 @@ public class DanceTeam : MonoBehaviour
         }
     }
 
-    //toggle on the win effect if one exists
+    /// <summary>
+    /// Enables the win effects for the winning dancer/team
+    /// </summary>
     public void EnableWinEffects()
     {
         if (fightWinContainer != null)
@@ -81,7 +97,9 @@ public class DanceTeam : MonoBehaviour
         }
     }
 
-    //toggle off win effects is one exists
+    /// <summary>
+    /// Disables the win effects for the winner/dancing team.
+    /// </summary>
     public void DisableWinEffects()
     {
         if (fightWinContainer != null)
@@ -89,5 +107,4 @@ public class DanceTeam : MonoBehaviour
             fightWinContainer.SetActive(false);
         }
     }
-    #endregion
 }

@@ -3,45 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Data object that can generate a number of dancer names
-/// 
-/// TODO:
-///     Needs to generate the number of requested <b>unique</b> character names for the dancers in our battle
+/// Functions to complete:
+/// - Generate Names
 /// </summary>
-[CreateAssetMenu(menuName = "Battle Objects/Character Name Generator")]
-[System.Serializable]
-public class CharacterNameGenerator : ScriptableObject
+public class CharacterNameGenerator : MonoBehaviour
 {
+
     [Header("Possible first names")]
-    [SerializeField]
-    public List<string> firstNames;
+    public List<string> firstNames; // These appear in the inspector, you should be assigning names to these in the inspector.
     [Header("Possible last names")]
-    [SerializeField]
     public List<string> lastNames;
     [Header("Possible nicknames")]
-    [SerializeField]
     public List<string> nicknames;
     [Header("Possible adjectives to describe the character")]
-    [SerializeField]
     public List<string> descriptors;
 
+    /// <summary>
+    /// Returns an Array of Character Names based on the number of namesNeeded.
+    /// </summary>
+    /// <param name="namesNeeded"></param>
+    /// <returns></returns>
     public CharacterName[] GenerateNames(int namesNeeded)
     {
+        Debug.LogWarning("CharacterNameGenerator called, it needs to fill out the names array with unique randomly constructed character names");
         CharacterName[] names = new CharacterName[namesNeeded];
+        string firstName, lastName, nickname, descriptor;
 
-        //TODO - filling this with empty names so the rest of our code is safe to run without need for many null checks
-        CharacterName emptyName = new CharacterName(string.Empty, string.Empty, string.Empty, string.Empty);
+
         for (int i = 0; i < names.Length; i++)
         {
-            emptyName.firstName = "John";
-            emptyName.lastName = "Johnson";
-            emptyName.nickname = "The John";
-            emptyName.descriptors = "The man who Johns";
-            names[i] = emptyName;
+            firstName = firstNames[Random.Range(0, firstNames.Count)];
+            lastName = lastNames[Random.Range(0, lastNames.Count)];
+            nickname = nicknames[Random.Range(0, nicknames.Count)];
+            descriptor = descriptors[Random.Range(0, descriptors.Count)];
+            names[i] = new CharacterName(firstName, lastName, nickname, descriptor);
         }
 
-        Debug.LogWarning("CharacterNameGenerator called, it needs to fill out the names array with unique randomly constructed character names");
-
+        //Returns an array of names that we just created.
         return names;
     }
 }

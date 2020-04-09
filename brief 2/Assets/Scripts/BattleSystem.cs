@@ -3,81 +3,103 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// The BattlesSystem handles the organisation of rounds, selecting the dancers to dance off from each side.
-/// It then hands off to the fightManager to determine the outcome of 2 dancers dance off'ing.
-/// 
-/// TODO:
-///     Needs to hand the request for a dance off battle round by selecting a dancer from each side and 
-///         handing off to the fight manager, via GameEvents.RequestFight
-///     Needs to handle GameEvents.OnFightComplete so that a new round can start
-///     Needs to handle a team winning or loosing
-///     This may be where characters are set as selected when they are in a dance off and when they leave the dance off
+/// Functions to complete:
+/// - Do Round
+/// - Fight Over
 /// </summary>
 public class BattleSystem : MonoBehaviour
 {
-    public DanceTeam TeamA,TeamB;
+    public DanceTeam teamA, teamB; //References to TeamA and TeamB
+    public FightManager fightManager; // References to our FightManager.
 
-    public float battlePrepTime = 2;
-    public float fightWinTime = 2;
+    public float battlePrepTime = 2;  // the amount of time we need to wait before a battle starts
+    public float fightCompletedWaitTime = 2; // the amount of time we need to wait till a fight/round is completed.
 
-    private void OnEnable()
+    /// <summary>
+    /// This occurs every round or every X number of seconds, is the core battle logic/game loop.
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator DoRound()
     {
-        GameEvents.OnRequestFighters += RoundRequested;
-        GameEvents.OnFightComplete += FightOver;
+
+        // waits for a float number of seconds....
+        yield return new WaitForSeconds(battlePrepTime);
+
+        //checking for no dancers on either team
+        if (teamA.allDancers.Count == 0 && teamB.allDancers.Count == 0)
+        {
+            Debug.LogWarning("DoRound called, but there are no dancers on either team. DanceTeamInit needs to be completed");
+            // This will be called if there are 0 dancers on both teams.
+
+        }
+        else if (teamA.activeDancers.Count > 0 && teamB.activeDancers.Count > 0)
+        {
+            Debug.LogWarning("DoRound called, it needs to select a dancer from each team to dance off and put in the FightEventData below");
+            //You need to select two random or engineered random characters to fight...so one from team a and one from team b....
+            Character characterA = teamA.activeDancers[Random.Range(0, teamA.activeDancers.Count)];
+            Character characterB = teamB.activeDancers[Random.Range(0, teamB.activeDancers.Count)];
+            //We then need to pass in the two selected dancers into fightManager.Fight(CharacterA,CharacterB);
+            //fightManager.Fight(charA, charB);
+            fightManager.Fight(characterA, characterB);
+        }
+        else
+        {
+            // IF we get to here...then we have a team has won...winner winner chicken dinner.
+            DanceTeam winner = null; // null is the same as saying nothing...often seen as a null reference in your logs.
+
+            // We need to determine a winner...but how?...maybe look at the previous if statements for clues?
+
+            if(teamA.activeDancers.Count > 0)
+            {
+                winner = teamA;
+            }
+            else
+            {
+                winner = teamB;
+            }
+
+
+            //Enables the win effects, and logs it out to the console.
+            winner.EnableWinEffects();
+            BattleLog.Log(winner.ToString(), winner.teamColor);
+
+            Debug.Log("DoRound called, but we have a winner so Game Over");
+
+        }
     }
 
-    private void OnDisable()
+    // This is where we can handle what happens when we win or lose.
+    public void FightOver(Character winner, Character defeated, float outcome)
     {
-        GameEvents.OnRequestFighters -= RoundRequested;
-        GameEvents.OnFightComplete -= FightOver;
+        Debug.LogWarning("FightOver called, may need to check for winners and/or notify teams of zero mojo dancers");
+        // assign damage...or if you want to restore health if they want that's up to you....might involve the character script.
+        defeated.DealDamage(outcome);
+
+        //calling the coroutine so we can put waits in for anims to play
+        StartCoroutine(HandleFightOver());
     }
 
-    void RoundRequested()
+
+
+    /// <summary>
+    /// Used to Request A round.
+    /// </summary>
+    public void RequestRound()
     {
         //calling the coroutine so we can put waits in for anims to play
         StartCoroutine(DoRound());
     }
 
-    IEnumerator DoRound()
-    {
-        yield return new WaitForSeconds(battlePrepTime);
-
-        //checking for no dancers on either team
-        if(TeamA.allDancers.Count == 0 && TeamB.allDancers.Count == 0)
-        {
-            Debug.LogWarning("DoRound called, but there are no dancers on either team. DanceTeamInit needs to be completed");
-
-        }
-        else if (TeamA.activeDancers.Count > 0 && TeamB.activeDancers.Count > 0)
-        {
-            Debug.LogWarning("DoRound called, it needs to select a dancer from each team to dance off and put in the FightEventData below");
-            //GameEvents.RequestFight(new FightEventData(a, b));
-        }
-        else
-        {
-            //GameEvents.BattleFinished(winner);
-            //winner.EnableWinEffects();
-
-            //log it battlelog also
-            Debug.Log("DoRound called, but we have a winner so Game Over");
-        }
-    }
-
-    void FightOver(FightResultData data)
-    {
-        Debug.LogWarning("FightOver called, may need to check for winners and/or notify teams of zero mojo dancers");
-
-        //defaulting to starting a new round to ease development
-        //calling the coroutine so we can put waits in for anims to play
-        StartCoroutine(HandleFightOver());
-    }
-
+    /// <summary>
+    /// Handles the end of a fight and waits to start the next round.
+    /// </summary>
+    /// <returns></returns>
     IEnumerator HandleFightOver()
     {
-        yield return new WaitForSeconds(fightWinTime);
-        TeamA.DisableWinEffects();
-        TeamB.DisableWinEffects();
+        yield return new WaitForSeconds(fightCompletedWaitTime);
+        teamA.DisableWinEffects();
+        teamB.DisableWinEffects();
         Debug.LogWarning("HandleFightOver called, may need to prepare or clean dancers or teams and checks before doing GameEvents.RequestFighters()");
-        //GameEvents.RequestFighters();
+        RequestRound();
     }
 }

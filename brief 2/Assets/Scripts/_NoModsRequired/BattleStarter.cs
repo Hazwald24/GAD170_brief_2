@@ -12,6 +12,8 @@ using UnityEngine;
 public class BattleStarter : MonoBehaviour
 {
     public float initialWaitTime;
+    public DanceTeamInit danceTeamInit;
+    public BattleSystem fightManager;
 
     void Awake()
     {
@@ -21,9 +23,10 @@ public class BattleStarter : MonoBehaviour
     IEnumerator FirstRound()  
     {
         yield return null; //wait a frame
-        GameEvents.IntialiseBattle();
+        danceTeamInit.InitTeams();
 
+        // waits a number of seconds before calling the first round.
         yield return new WaitForSeconds(initialWaitTime);
-        GameEvents.RequestFighters();        
+        fightManager.RequestRound();        
     }
 }

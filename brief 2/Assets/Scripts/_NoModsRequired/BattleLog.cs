@@ -28,15 +28,22 @@ public class BattleLog : MonoBehaviour
         }
     }
 
-    public static void Log(IBattleLogMessage message)
+    /// <summary>
+    /// Prints a message(String) to the main UI screen, in the colour provided.
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="TeamColor"></param>
+    public static void Log(string message, Color TeamColor)
     {
         if(instance == null)
         {
             return;
         }
 
+        
         GameObject newLog = Instantiate(instance.logMessage, instance.transform);
-        newLog.GetComponent<LogHandler>().Init(message);
+        IBattleLogMessage mess = new DefaultLogMessage(message, TeamColor);
+        newLog.GetComponent<LogHandler>().Init(mess);
 
         instance.StartCoroutine(ScrollToBottom());
     }
